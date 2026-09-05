@@ -33,7 +33,7 @@ def convert_match_to_event(match):
         "dtstamp": datetime.now(timezone.utc),
         "dtstart": utc_date,
         "dtend": end_date,
-        "summary": f"{home_team} vs {away_team}",
+        "summary": f"⚽ {away_team} vs {home_team}",
         "description": description,
         "status": "CONFIRMED",
         "sequence": 0,
