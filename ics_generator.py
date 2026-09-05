@@ -37,6 +37,7 @@ def convert_match_to_event(match):
         "description": description,
         "status": "CONFIRMED",
         "sequence": 0,
+        "venue": match.get("venue", ""),
     }
 
 
@@ -98,6 +99,8 @@ def create_ics(events):
     ]
 
     for event in events:
+        venue = event.get("venue", "")
+
         lines.extend([
             "BEGIN:VEVENT",
             f'UID:{escape_ics_text(event["uid"])}',
@@ -105,6 +108,14 @@ def create_ics(events):
             f'DTSTART:{format_ics_datetime(event["dtstart"])}',
             f'DTEND:{format_ics_datetime(event["dtend"])}',
             f'SUMMARY:{escape_ics_text(event["summary"])}',
+        ])
+
+        if venue:
+            lines.append(
+                f'LOCATION:{escape_ics_text(venue)}'
+            )
+
+        lines.extend([
             f'DESCRIPTION:{escape_ics_text(event["description"])}',
             f'STATUS:{event["status"]}',
             f'SEQUENCE:{event["sequence"]}',
