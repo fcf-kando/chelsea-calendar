@@ -15,10 +15,32 @@ if not API_KEY:
         "環境変数 FOOTBALL_DATA_API_KEY が設定されていません。"
     )
 TEAM_ID = 61
-SEASON = 2502
+COMPETITION_CODE = "PL"
+
+headers = {
+    "X-Auth-Token": API_KEY
+}
 
 # ========================================
-# APIリクエスト
+# 最新シーズンを取得
+# ========================================
+
+competition_url = (
+    f"https://api.football-data.org/v4/competitions/{COMPETITION_CODE}"
+)
+
+response = requests.get(
+    competition_url,
+    headers=headers
+)
+
+response.raise_for_status()
+competition_data = response.json()
+season_start_date = competition_data["currentSeason"]["startDate"]
+season = int(season_start_date[:4])
+
+# ========================================
+# Chelseaの試合を取得
 # ========================================
 
 API_URL = f"https://api.football-data.org/v4/teams/{TEAM_ID}/matches"
@@ -27,7 +49,7 @@ headers = {
 }
 
 params = {
-    "season": SEASON
+    "season": season
 }
 
 response = requests.get(
