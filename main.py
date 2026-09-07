@@ -84,6 +84,34 @@ data = response.json()
 #     pprint(match)
 
 # ========================================
+# スタジアム情報を補完
+# ========================================
+
+# 試合一覧にはvenueが含まれないため、同じシーズンのチーム情報を取得する。
+# カップ戦などの中立地開催を本拠地で上書きしないよう、PLのみ補完する。
+matches_without_venue = [
+    match for match in data["matches"]
+    if match["competition"]["code"] == "PL" and not match.get("venue")
+]
+
+if matches_without_venue:
+    teams_response = requests.get(
+        "https://api.football-data.org/v4/competitions/PL/teams",
+        headers=headers,
+        params={"season": season},
+        timeout=30,
+    )
+    teams_response.raise_for_status()
+    team_venues = {
+        team["id"]: team.get("venue")
+        for team in teams_response.json()["teams"]
+    }
+
+    for match in matches_without_venue:
+        match["venue"] = team_venues.get(match["homeTeam"]["id"]) or ""
+
+
+# ========================================
 # ICSを生成
 # ========================================
 
