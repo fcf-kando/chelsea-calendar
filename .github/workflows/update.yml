@@ -1,6 +1,9 @@
 name: Update Chelsea Calendar
 
 on:
+  push:
+    branches:
+      - fix/wait-for-pages-artifact
   workflow_dispatch:
 
   schedule:
